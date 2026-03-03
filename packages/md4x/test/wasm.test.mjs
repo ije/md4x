@@ -8,7 +8,7 @@ import {
   renderToMeta,
   parseMeta,
   renderToText,
-} from "../lib/wasm.mjs";
+} from "md4x/wasm";
 import { defineSuite } from "./_suite.mjs";
 
 beforeAll(async () => {

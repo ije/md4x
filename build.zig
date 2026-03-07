@@ -41,7 +41,6 @@ const PkgBuildOptions = struct {
     strip: bool,
     libyaml_src: std.Build.Module.AddCSourceFilesOptions,
     include_paths: []const std.Build.LazyPath,
-    clean_step: *std.Build.Step,
 };
 
 pub fn build(b: *std.Build) void {
@@ -80,10 +79,6 @@ pub fn build(b: *std.Build) void {
     for (include_paths) |p| exe.addIncludePath(p);
     b.installArtifact(exe);
 
-    // --- Clean packages/md4x/build before rebuilding ---
-
-    const clean_build = b.addRemoveDirTree(b.path("packages/md4x/build"));
-
     // --- WASM & NAPI targets ---
 
     const pkg_opts: PkgBuildOptions = .{
@@ -91,7 +86,6 @@ pub fn build(b: *std.Build) void {
         .strip = strip,
         .libyaml_src = libyaml_src,
         .include_paths = include_paths,
-        .clean_step = &clean_build.step,
     };
     _ = addWasm(b, pkg_opts);
     _ = addNapi(b, pkg_opts);
@@ -133,7 +127,6 @@ fn addWasm(b: *std.Build, opts: PkgBuildOptions) *std.Build.Step {
     const wasm_install = b.addInstallArtifact(md4x_wasm, .{
         .dest_dir = .{ .override = .{ .custom = "../packages/md4x/build" } },
     });
-    wasm_install.step.dependOn(opts.clean_step);
     const wasm_step = b.step("wasm", "Build WASM library");
     wasm_step.dependOn(&wasm_install.step);
     return wasm_step;
@@ -210,8 +203,6 @@ fn addNapi(b: *std.Build, opts: PkgBuildOptions) *std.Build.Step {
             .dest_dir = .{ .override = .{ .custom = "../packages/md4x/build" } },
             .dest_sub_path = nt.output_name,
         });
-        cross_install.step.dependOn(opts.clean_step);
-        // cross_install.step.dependOn(&bun_install.step);
 
         const cross_step = b.step("napi-" ++ nt.name, "Build NAPI addon for " ++ nt.name);
         cross_step.dependOn(&cross_install.step);

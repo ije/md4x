@@ -27,16 +27,21 @@ jobs:
           languages: ${{ matrix.language }}
           config-file: .github/codeql/codeql-config.yml
 
-      - name: Detect Zig version
-        id: zig-version
-        run: echo "version=$(grep -oP 'minimum_zig_version\s*=\s*"\K[^"]+' build.zig.zon)" >> "$GITHUB_OUTPUT"
+      - name: Fetch libyaml
+        run: |
+          git clone --depth 1 --branch 0.2.5 https://github.com/yaml/libyaml.git /tmp/libyaml
 
-      - uses: mlugg/setup-zig@v2
-        with:
-          version: ${{ steps.zig-version.outputs.version }}
-
-      - name: Build
-        run: zig build
+      - name: Build (gcc for CodeQL tracing)
+        run: |
+          gcc -c -Wall -Wextra -O2 -DMD4X_USE_UTF8 \
+            -Isrc -Isrc/renderers -I/tmp/libyaml/include \
+            src/md4x.c src/entity.c \
+            src/renderers/md4x-html.c src/renderers/md4x-ast.c \
+            src/renderers/md4x-ansi.c src/renderers/md4x-meta.c \
+            src/renderers/md4x-text.c src/renderers/md4x-heal.c \
+            src/cli/md4x-cli.c src/cli/cmdline.c \
+            /tmp/libyaml/src/api.c /tmp/libyaml/src/reader.c \
+            /tmp/libyaml/src/scanner.c /tmp/libyaml/src/parser.c
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

@@ -747,3 +747,22 @@ bar
 bar</p>
 ````````````````````````````````
 
+
+## Fuzz: md_parse_props infinite loop on `}` in attrs
+
+`}` inside a raw attrs string caused `md_parse_props` to loop forever
+(key scan stops immediately, `i` never advances).
+
+```````````````````````````````` example
+[text]{.class}=}
+.
+<p><span class="class">text</span>=}</p>
+````````````````````````````````
+
+Bare `=` at start of attrs:
+
+```````````````````````````````` example
+[text]{=foo}
+.
+<p><span foo>text</span></p>
+````````````````````````````````

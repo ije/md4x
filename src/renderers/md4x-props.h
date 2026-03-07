@@ -150,6 +150,9 @@ md_parse_props(const MD_CHAR* raw, MD_SIZE size, MD_PARSED_PROPS* out)
                     p->value = NULL;
                     p->value_size = 0;
                 }
+            } else {
+                /* Skip unrecognized character to avoid infinite loop. */
+                i++;
             }
         }
     }

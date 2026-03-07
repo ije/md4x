@@ -160,18 +160,15 @@ Test suites: `spec.txt`, `spec-tables.txt`, `spec-strikethrough.txt`, `spec-task
 LibFuzzer harnesses for all renderers and the heal utility. Requires clang with LibFuzzer and libyaml.
 
 ```sh
-# Build all fuzzers:
+# Build & run a fuzzer (builds automatically, 60s default):
+./test/fuzzers/run.sh html              # html fuzzer, 60s
+./test/fuzzers/run.sh ast 300           # ast fuzzer, 300s
+
+# Build all fuzzers (without running):
 ./test/fuzzers/build.sh
 
 # Build a single fuzzer:
 ./test/fuzzers/build.sh html    # or: ast, ansi, text, meta, heal
-
-# Run a fuzzer with seed corpus:
-./fuzz-out/fuzz-mdhtml test/fuzzers/seed-corpus/
-
-# Run with corpus directory + time limit:
-mkdir -p corpus-html
-./fuzz-out/fuzz-mdhtml corpus-html test/fuzzers/seed-corpus/ -max_total_time=300
 ```
 
 Output goes to `fuzz-out/` (gitignored). Environment variables: `CC` (compiler, default: `clang`), `SANITIZERS` (default: `fuzzer,address,undefined`), `FUZZ_OUT_DIR` (output dir).

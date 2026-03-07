@@ -24,7 +24,7 @@ SANITIZERS="${SANITIZERS:-fuzzer,address,undefined}"
 
 SRC="$ROOT/src"
 RENDERERS="$SRC/renderers"
-CFLAGS="-fsanitize=$SANITIZERS -I$SRC -I$RENDERERS -DMD4X_USE_UTF8 -g -O1"
+CFLAGS="-fsanitize=$SANITIZERS -I$SRC -I$RENDERERS -I$FUZZ_DIR -DMD4X_USE_UTF8 -g -O1"
 
 mkdir -p "$OUT_DIR"
 

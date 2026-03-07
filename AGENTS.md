@@ -184,7 +184,7 @@ Output goes to `fuzz-out/` (gitignored). Environment variables: `CC` (compiler, 
 | `fuzz-mdmeta.c` | `md_meta()` | Metadata extractor + libyaml                          |
 | `fuzz-mdheal.c` | `md_heal()` | Heal utility (no flags, no parser dependency)         |
 
-All parser-based harnesses use the first 8 bytes of input as `parser_flags` + `renderer_flags` to explore flag combinations. Seed corpus in `test/fuzzers/seed-corpus/` covers: CommonMark, GFM, LaTeX math, wiki links, frontmatter, components, attributes, alerts, underline, code block metadata, and heal edge cases.
+All harnesses reject invalid UTF-8 input (returning `-1` to steer the fuzzer toward valid inputs), matching the JS binding surface where input is always a valid UTF-8 string. Seed corpus in `test/fuzzers/seed-corpus/` covers: CommonMark, GFM, LaTeX math, wiki links, frontmatter, components, attributes, alerts, underline, code block metadata, and heal edge cases.
 
 ## `md4x` CLI
 

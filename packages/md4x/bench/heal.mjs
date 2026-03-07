@@ -1,6 +1,6 @@
 import { bench, compact, run, summary } from "mitata";
 import * as napi from "../lib/napi.mjs";
-import * as wasm from "../lib/wasm/defult.mjs";
+import * as wasm from "../lib/wasm/default.mjs";
 import remend from "remend";
 import * as fixtures from "./_fixtures.mjs";
 

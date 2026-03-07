@@ -1,6 +1,6 @@
 import { bench, compact, run, summary } from "mitata";
 import * as napi from "../lib/napi.mjs";
-import * as wasm from "../lib/wasm.mjs";
+import * as wasm from "../lib/wasm/default.mjs";
 import * as md4w from "md4w";
 import MarkdownIt from "markdown-it";
 import { createMarkdownExit } from "markdown-exit";

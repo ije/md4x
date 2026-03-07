@@ -1,7 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { bench, compact, run, summary } from "mitata";
 import * as napi from "../lib/napi.mjs";
-import * as wasm from "../lib/wasm.mjs";
+import * as wasm from "../lib/wasm/default.mjs";
 import MarkdownIt from "markdown-it";
 import pluginMdc from "markdown-it-mdc";
 

@@ -20,6 +20,9 @@ pathological = {
     "U+0000":
             ("abc\u0000de\u0000",
             re.compile("abc\ufffd?de\ufffd?")),
+    "U+0000 in code span across lines":
+            ("`\u0000\n`",
+            re.compile(r"<p><code>.? </code></p>")),
     "U+FEFF (Unicode BOM)":
             ("\ufefffoo",
             re.compile("<p>foo</p>")),

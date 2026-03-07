@@ -59,6 +59,8 @@ mkdir -p "$CORPUS_DIR/$TARGET"
 ARTIFACT_DIR="$FUZZ_OUT/artifacts/$TARGET"
 mkdir -p "$ARTIFACT_DIR"
 
+trap 'echo ""; echo "Interrupted."; exit 0' INT
+
 echo "Running fuzz-md$TARGET (-fork=$CORES), artifacts in $ARTIFACT_DIR..."
 while true; do
     "$BINARY" "$CORPUS_DIR/$TARGET" "$SEED_DIR" \

@@ -33,7 +33,7 @@ jobs:
         run: bun install
 
       - name: Build
-        run: zig build --verbose
+        run: zig build --verbose && zig build wasm && zig build napi-all
 
       - name: Tests
         run: bun ./scripts/run-tests.ts

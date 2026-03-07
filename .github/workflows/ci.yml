@@ -27,7 +27,7 @@ jobs:
         run: bun install
 
       - name: Build
-        run: zig build
+        run: zig build && zig build wasm && zig build napi-all
 
       - name: Tests
         run: bun ./scripts/run-tests.ts

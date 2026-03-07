@@ -93,11 +93,8 @@ pub fn build(b: *std.Build) void {
         .include_paths = include_paths,
         .clean_step = &clean_build.step,
     };
-    const wasm_step = addWasm(b, pkg_opts);
-    const napi_all_step = addNapi(b, pkg_opts);
-
-    b.getInstallStep().dependOn(wasm_step);
-    b.getInstallStep().dependOn(napi_all_step);
+    _ = addWasm(b, pkg_opts);
+    _ = addNapi(b, pkg_opts);
 }
 
 fn addWasm(b: *std.Build, opts: PkgBuildOptions) *std.Build.Step {

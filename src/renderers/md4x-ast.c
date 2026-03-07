@@ -408,10 +408,16 @@ json_enter_block(MD_BLOCKTYPE type, void* detail, void* userdata)
             break;
     }
 
-    if(ctx->current != NULL)
+    if(ctx->current != NULL) {
         json_append_child(ctx, node);
-    else
+    } else if(ctx->root == NULL) {
         ctx->root = node;
+    } else {
+        /* Unbalanced callbacks caused stack underflow — attach to root
+         * to avoid leaking the subtree. */
+        ctx->current = ctx->root;
+        json_append_child(ctx, node);
+    }
 
     json_push(ctx, node);
     return ctx->error ? -1 : 0;
@@ -582,10 +588,11 @@ json_leave_span(MD_SPANTYPE type, void* detail, void* userdata)
     (void) detail;
 
     if(ctx->image_nesting > 0) {
-        ctx->image_nesting--;
+        if(type == MD_SPAN_IMG)
+            ctx->image_nesting--;
         if(ctx->image_nesting > 0)
             return 0;
-        /* Leaving the image span: text_value has the accumulated alt text. */
+        /* Leaving the outermost image span: text_value has the accumulated alt text. */
     }
 
     json_pop(ctx);
@@ -600,6 +607,14 @@ json_text(MD_TEXTTYPE type, const MD_CHAR* text, MD_SIZE size, void* userdata)
     JSON_NODE* prev;
     char* value = NULL;
     MD_SIZE value_size = 0;
+
+    /* Guard against unbalanced callbacks causing NULL current. */
+    if(ctx->current == NULL) {
+        if(ctx->root != NULL)
+            ctx->current = ctx->root;
+        else
+            return 0;
+    }
 
     /* Inside an image: accumulate text as alt attribute. */
     if(ctx->image_nesting > 0) {

@@ -19,8 +19,24 @@ set -e
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 FUZZ_DIR="$ROOT/test/fuzzers"
 OUT_DIR="${FUZZ_OUT_DIR:-$ROOT/fuzz-out}"
-CC="${CC:-clang}"
 SANITIZERS="${SANITIZERS:-fuzzer,address,undefined}"
+
+# Resolve a clang with LibFuzzer support.
+# Apple's system clang does not ship LibFuzzer — use Homebrew LLVM on macOS.
+if [ -z "$CC" ]; then
+    if [ "$(uname -s)" = "Darwin" ]; then
+        LLVM_PREFIX="$(brew --prefix llvm 2>/dev/null || true)"
+        if [ -x "$LLVM_PREFIX/bin/clang" ]; then
+            CC="$LLVM_PREFIX/bin/clang"
+        else
+            echo "Error: LibFuzzer requires LLVM clang on macOS (Apple clang does not include it)." >&2
+            echo "Install it with:  brew install llvm" >&2
+            exit 1
+        fi
+    else
+        CC="clang"
+    fi
+fi
 
 SRC="$ROOT/src"
 RENDERERS="$SRC/renderers"

@@ -39,13 +39,13 @@ while [ $# -gt 0 ]; do
 done
 
 if [ -z "$TARGET" ]; then
-    echo "Usage: $0 <html|ast|ansi|text|meta|heal> [--timeout SECONDS] [--cores N]" >&2
+    echo "Usage: $0 <html|ast|ansi|text|meta|markdown|heal> [--timeout SECONDS] [--cores N]" >&2
     exit 1
 fi
 
 case "$TARGET" in
-    html|ast|ansi|text|meta|heal) ;;
-    *) echo "Unknown target: $TARGET (expected: html, ast, ansi, text, meta, heal)" >&2; exit 1 ;;
+    html|ast|ansi|text|meta|markdown|heal) ;;
+    *) echo "Unknown target: $TARGET (expected: html, ast, ansi, text, meta, markdown, heal)" >&2; exit 1 ;;
 esac
 
 BINARY="$FUZZ_OUT/fuzz-md$TARGET"

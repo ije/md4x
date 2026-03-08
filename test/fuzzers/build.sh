@@ -81,6 +81,16 @@ build_meta() {
         -o "$OUT_DIR/fuzz-mdmeta"
 }
 
+build_markdown() {
+    echo "Building fuzz-mdmarkdown..."
+    $CC $CFLAGS \
+        "$FUZZ_DIR/fuzz-mdmarkdown.c" \
+        "$SRC/md4x.c" "$SRC/entity.c" \
+        "$RENDERERS/md4x-markdown.c" \
+        "$RENDERERS/md4x-heal.c" \
+        -o "$OUT_DIR/fuzz-mdmarkdown"
+}
+
 build_heal() {
     echo "Building fuzz-mdheal..."
     $CC $CFLAGS \
@@ -95,6 +105,7 @@ if [ $# -eq 0 ]; then
     build_ansi
     build_text
     build_meta
+    build_markdown
     build_heal
     echo "All fuzzers built in $OUT_DIR/"
 else
@@ -105,6 +116,7 @@ else
             fuzz-mdansi|ansi)  build_ansi ;;
             fuzz-mdtext|text)  build_text ;;
             fuzz-mdmeta|meta)  build_meta ;;
+            fuzz-mdmarkdown|markdown)  build_markdown ;;
             fuzz-mdheal|heal)  build_heal ;;
             *) echo "Unknown target: $target" >&2; exit 1 ;;
         esac

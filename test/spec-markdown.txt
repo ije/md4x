@@ -1,0 +1,414 @@
+# Markdown Renderer
+
+Tests for the markdown renderer (`--format markdown`).
+Output is clean, standard CommonMark-compatible markdown.
+MDC/Comark syntax is converted to HTML tags, frontmatter is removed,
+and raw HTML blocks are stripped.
+
+## Headings
+
+```````````````````````````````` example [no-normalize]
+# Heading 1
+.
+# Heading 1
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+## Heading 2
+.
+## Heading 2
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+### Heading 3
+.
+### Heading 3
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+###### Heading 6
+.
+###### Heading 6
+.
+-t markdown
+````````````````````````````````
+
+## Paragraphs
+
+```````````````````````````````` example [no-normalize]
+Hello world.
+.
+Hello world.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+First paragraph.
+
+Second paragraph.
+.
+First paragraph.
+
+Second paragraph.
+.
+-t markdown
+````````````````````````````````
+
+## Inline formatting
+
+```````````````````````````````` example [no-normalize]
+This is **bold** text.
+.
+This is **bold** text.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+This is *italic* text.
+.
+This is *italic* text.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+This is ***bold italic*** text.
+.
+This is ***bold italic*** text.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+This is `inline code` text.
+.
+This is `inline code` text.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+This is ~~strikethrough~~ text.
+.
+This is ~~strikethrough~~ text.
+.
+-t markdown
+````````````````````````````````
+
+## Links and images
+
+```````````````````````````````` example [no-normalize]
+A [link](http://example.com) here.
+.
+A [link](http://example.com) here.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+A [link](http://example.com "title") here.
+.
+A [link](http://example.com "title") here.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+An ![image](pic.png) here.
+.
+An ![image](pic.png) here.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+An ![image](pic.png "alt title") here.
+.
+An ![image](pic.png "alt title") here.
+.
+-t markdown
+````````````````````````````````
+
+## Code blocks
+
+```````````````````````````````` example [no-normalize]
+```
+code block
+```
+.
+```
+code block
+```
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+```javascript
+const x = 1;
+```
+.
+```javascript
+const x = 1;
+```
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+~~~
+tilde fence
+~~~
+.
+~~~
+tilde fence
+~~~
+.
+-t markdown
+````````````````````````````````
+
+## Blockquotes
+
+```````````````````````````````` example [no-normalize]
+> Quoted text.
+.
+> Quoted text.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+> First level.
+>
+> > Nested quote.
+.
+> First level.
+
+> > Nested quote.
+.
+-t markdown
+````````````````````````````````
+
+## Lists
+
+```````````````````````````````` example [no-normalize]
+- item 1
+- item 2
+- item 3
+.
+- item 1
+- item 2
+- item 3
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+1. first
+2. second
+3. third
+.
+1. first
+2. second
+3. third
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+- [x] done
+- [ ] todo
+.
+- [x] done
+- [ ] todo
+.
+-t markdown
+````````````````````````````````
+
+## Horizontal rules
+
+```````````````````````````````` example [no-normalize]
+Above.
+
+---
+
+Below.
+.
+Above.
+
+---
+
+Below.
+.
+-t markdown
+````````````````````````````````
+
+## Tables
+
+```````````````````````````````` example [no-normalize]
+| a | b |
+|---|---|
+| 1 | 2 |
+.
+| a | b |
+| --- | --- |
+| 1 | 2 |
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+| left | center | right |
+|:-----|:------:|------:|
+| a    | b      | c     |
+.
+| left | center | right |
+| :--- | :---: | ---: |
+| a | b | c |
+.
+-t markdown
+````````````````````````````````
+
+## Frontmatter stripping
+
+```````````````````````````````` example [no-normalize]
+---
+title: Hello
+description: A test
+---
+
+# Heading
+.
+# Heading
+.
+-t markdown
+````````````````````````````````
+
+## Raw HTML stripping
+
+```````````````````````````````` example [no-normalize]
+Text before.
+
+<div>raw html block</div>
+
+Text after.
+.
+Text before.
+
+Text after.
+.
+-t markdown
+````````````````````````````````
+
+## Block components to HTML tags
+
+```````````````````````````````` example [no-normalize]
+::alert{type="info"}
+Content here.
+::
+.
+<alert>
+
+Content here.
+</alert>
+.
+-t markdown
+````````````````````````````````
+
+## Inline components to HTML tags
+
+```````````````````````````````` example [no-normalize]
+Text with :badge[New] component.
+.
+Text with <badge>New</badge> component.
+.
+-t markdown
+````````````````````````````````
+
+## Alerts
+
+```````````````````````````````` example [no-normalize]
+> [!NOTE]
+> Important information.
+.
+> [!NOTE]
+> Important information.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+> [!WARNING]
+> Be careful!
+.
+> [!WARNING]
+> Be careful!
+.
+-t markdown
+````````````````````````````````
+
+## LaTeX math
+
+```````````````````````````````` example [no-normalize]
+Inline $E = mc^2$ math.
+.
+Inline $E = mc^2$ math.
+.
+-t markdown
+````````````````````````````````
+
+```````````````````````````````` example [no-normalize]
+Display math:
+
+$$
+x^2 + y^2 = z^2
+$$
+.
+Display math:
+
+$$ x^2 + y^2 = z^2 $$
+.
+-t markdown
+````````````````````````````````
+
+## Hard line breaks
+
+```````````````````````````````` example [no-normalize]
+Line one.\
+Line two.
+.
+Line one.\
+Line two.
+.
+-t markdown
+````````````````````````````````
+
+## Entities
+
+```````````````````````````````` example [no-normalize]
+Use &amp; for ampersand.
+.
+Use & for ampersand.
+.
+-t markdown
+````````````````````````````````
+
+## Soft breaks
+
+```````````````````````````````` example [no-normalize]
+Line one
+continues here.
+.
+Line one
+continues here.
+.
+-t markdown
+````````````````````````````````

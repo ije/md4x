@@ -36,10 +36,12 @@ src/
     md4x-meta.h        # Meta renderer public API
     md4x-text.c        # Plain text renderer library (~350 LoC)
     md4x-text.h        # Plain text renderer public API
+    md4x-markdown.c    # Markdown renderer library (~820 LoC)
+    md4x-markdown.h    # Markdown renderer public API
     md4x-heal.c        # Markdown heal/completion utility (~600 LoC)
     md4x-heal.h        # Heal utility public API
   cli/
-    md4x-cli.c           # CLI utility (multi-format: html, text, json, ansi, heal)
+    md4x-cli.c           # CLI utility (multi-format: html, text, json, ansi, markdown, heal)
     cmdline.c            # Command-line parser (from c-reusables)
     cmdline.h            # Command-line parser API
     md4x.1               # Man page
@@ -131,8 +133,9 @@ Produces four static libraries, one executable, and optional WASM/NAPI targets:
 - **libmd4x-ansi** — ANSI terminal renderer (links against libmd4x)
 - **libmd4x-meta** — Meta renderer (links against libmd4x)
 - **libmd4x-text** — Plain text renderer (links against libmd4x)
+- **libmd4x-markdown** — Markdown renderer (links against libmd4x)
 - **libmd4x-heal** — Markdown heal/completion utility (standalone, no parser dependency)
-- **md4x** — CLI utility (supports `--format=html|text|json|ansi|heal`)
+- **md4x** — CLI utility (supports `--format=html|text|json|ansi|markdown|heal`)
 - **md4x.wasm** — WASM library (`zig build wasm`, output: `packages/md4x/build/md4x.wasm`)
 - **md4x.{platform}-{arch}[-musl].node** — Cross-compiled NAPI addons (`zig build napi-all`, 9 targets)
 
@@ -153,7 +156,7 @@ python3 test/pathological-tests.py -p zig-out/bin/md4x
 
 Test format: Markdown examples with `.` separator and expected HTML output. The test runner pipes input through `md4x` and compares normalized output.
 
-Test suites: `spec.txt`, `spec-tables.txt`, `spec-strikethrough.txt`, `spec-tasklists.txt`, `spec-wiki-links.txt`, `spec-latex-math.txt`, `spec-permissive-autolinks.txt`, `spec-hard-soft-breaks.txt`, `spec-underline.txt`, `spec-frontmatter.txt`, `spec-components.txt`, `spec-attributes.txt`, `spec-alerts.txt`, `regressions.txt`, `coverage.txt`
+Test suites: `spec.txt`, `spec-tables.txt`, `spec-strikethrough.txt`, `spec-tasklists.txt`, `spec-wiki-links.txt`, `spec-latex-math.txt`, `spec-permissive-autolinks.txt`, `spec-hard-soft-breaks.txt`, `spec-underline.txt`, `spec-frontmatter.txt`, `spec-components.txt`, `spec-attributes.txt`, `spec-alerts.txt`, `spec-markdown.txt`, `regressions.txt`, `coverage.txt`
 
 ## Fuzzing
 
@@ -177,14 +180,15 @@ Output goes to `fuzz-out/` (gitignored). Environment variables: `CC` (compiler, 
 
 **Harnesses:**
 
-| Harness         | Target      | Notes                                                 |
-| --------------- | ----------- | ----------------------------------------------------- |
-| `fuzz-mdhtml.c` | `md_html()` | HTML renderer + libyaml                               |
-| `fuzz-mdast.c`  | `md_ast()`  | AST renderer (in-memory tree, libyaml) — highest risk |
-| `fuzz-mdansi.c` | `md_ansi()` | ANSI terminal renderer                                |
-| `fuzz-mdtext.c` | `md_text()` | Plain text renderer                                   |
-| `fuzz-mdmeta.c` | `md_meta()` | Metadata extractor + libyaml                          |
-| `fuzz-mdheal.c` | `md_heal()` | Heal utility (no flags, no parser dependency)         |
+| Harness             | Target          | Notes                                                 |
+| ------------------- | --------------- | ----------------------------------------------------- |
+| `fuzz-mdhtml.c`     | `md_html()`     | HTML renderer + libyaml                               |
+| `fuzz-mdast.c`      | `md_ast()`      | AST renderer (in-memory tree, libyaml) — highest risk |
+| `fuzz-mdansi.c`     | `md_ansi()`     | ANSI terminal renderer                                |
+| `fuzz-mdtext.c`     | `md_text()`     | Plain text renderer                                   |
+| `fuzz-mdmeta.c`     | `md_meta()`     | Metadata extractor + libyaml                          |
+| `fuzz-mdmarkdown.c` | `md_markdown()` | Markdown renderer                                     |
+| `fuzz-mdheal.c`     | `md_heal()`     | Heal utility (no flags, no parser dependency)         |
 
 All harnesses reject invalid UTF-8 input (returning `-1` to steer the fuzzer toward valid inputs), matching the JS binding surface where input is always a valid UTF-8 string. Seed corpus in `test/fuzzers/seed-corpus/` covers: CommonMark, GFM, LaTeX math, wiki links, frontmatter, components, attributes, alerts, underline, code block metadata, and heal edge cases.
 

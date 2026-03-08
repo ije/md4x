@@ -6,6 +6,7 @@ export {
   parseMeta,
   renderToMeta,
   renderToText,
+  renderToMarkdown,
   heal,
 } from "./common.mjs";
 

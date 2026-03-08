@@ -32,6 +32,7 @@
 #include "md4x-ast.h"
 #include "md4x-ansi.h"
 #include "md4x-text.h"
+#include "md4x-markdown.h"
 #include "md4x-heal.h"
 #include "cmdline.h"
 
@@ -43,10 +44,11 @@ typedef enum {
     FORMAT_TEXT,
     FORMAT_JSON,
     FORMAT_ANSI,
+    FORMAT_MARKDOWN,
     FORMAT_HEAL
 } OutputFormat;
 
-static const char* format_name[] = { "html", "text", "json", "ansi", "heal" };
+static const char* format_name[] = { "html", "text", "json", "ansi", "markdown", "heal" };
 
 /* Global options. */
 static OutputFormat output_format = FORMAT_HTML;
@@ -236,6 +238,16 @@ process_file(const char* in_path, FILE* in, FILE* out)
                         (void*) &buf_out, p_flags, t_flags);
             break;
         }
+        case FORMAT_MARKDOWN: {
+            unsigned pm_flags = MD_MARKDOWN_FLAG_DEBUG;
+#ifndef MD4X_USE_ASCII
+            pm_flags |= MD_MARKDOWN_FLAG_SKIP_UTF8_BOM;
+#endif
+            if(want_heal) pm_flags |= MD_MARKDOWN_FLAG_HEAL;
+            ret = md_markdown(buf_in.data, (MD_SIZE)buf_in.size, process_output,
+                        (void*) &buf_out, p_flags, pm_flags);
+            break;
+        }
         case FORMAT_HEAL: {
             ret = md_heal(buf_in.data, (MD_SIZE)buf_in.size, process_output,
                         (void*) &buf_out);
@@ -300,7 +312,7 @@ usage(void)
         "\n"
         "General options:\n"
         "  -o  --output=FILE    Output file (default is standard output)\n"
-        "  -t, --format=FORMAT  Output format: html (default), text, json, ansi, heal\n"
+        "  -t, --format=FORMAT  Output format: html (default), text, json, ansi, markdown, heal\n"
         "      --heal           Heal incomplete markdown before rendering\n"
         "  -s, --stat           Measure time of input parsing\n"
         "  -h, --help           Display this help and exit\n"
@@ -355,11 +367,13 @@ cmdline_callback(int opt, char const* value, void* data)
                 output_format = FORMAT_JSON;
             else if(strcmp(value, "ansi") == 0)
                 output_format = FORMAT_ANSI;
+            else if(strcmp(value, "markdown") == 0)
+                output_format = FORMAT_MARKDOWN;
             else if(strcmp(value, "heal") == 0)
                 output_format = FORMAT_HEAL;
             else {
                 fprintf(stderr, "Unknown format: %s\n", value);
-                fprintf(stderr, "Supported formats: html, text, json, ansi, heal\n");
+                fprintf(stderr, "Supported formats: html, text, json, ansi, markdown, heal\n");
                 exit(1);
             }
             break;

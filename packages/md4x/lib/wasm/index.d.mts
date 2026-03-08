@@ -51,4 +51,8 @@ export declare function renderToText(
   input: string,
   opts?: RenderOptions,
 ): string;
+export declare function renderToMarkdown(
+  input: string,
+  opts?: RenderOptions,
+): string;
 export declare function heal(input: string): string;

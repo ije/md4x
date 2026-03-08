@@ -29,6 +29,7 @@ export interface NAPIBinding {
   renderToAnsiMeta(input: string): Buffer;
   renderToMeta(input: string, flags?: number): string;
   renderToText(input: string, flags?: number): string;
+  renderToMarkdown(input: string, flags?: number): string;
   heal(input: string): string;
 }
 
@@ -56,6 +57,10 @@ export declare function parseMeta(
   opts?: RenderOptions,
 ): ComarkMeta;
 export declare function renderToText(
+  input: string,
+  opts?: RenderOptions,
+): string;
+export declare function renderToMarkdown(
   input: string,
   opts?: RenderOptions,
 ): string;

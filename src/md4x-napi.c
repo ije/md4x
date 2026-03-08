@@ -32,6 +32,7 @@
 #include "md4x-ansi.h"
 #include "md4x-meta.h"
 #include "md4x-text.h"
+#include "md4x-markdown.h"
 #include "md4x-heal.h"
 
 
@@ -259,6 +260,11 @@ static napi_value md4x_napi_to_text(napi_env env, napi_callback_info info)
     return render_impl(env, info, md_text);
 }
 
+static napi_value md4x_napi_to_markdown(napi_env env, napi_callback_info info)
+{
+    return render_impl(env, info, md_markdown);
+}
+
 
 static napi_value md4x_napi_heal(napi_env env, napi_callback_info info)
 {
@@ -308,9 +314,10 @@ static napi_value init(napi_env env, napi_value exports)
         { "renderToAnsiMeta", NULL, md4x_napi_to_ansi_meta, NULL, NULL, NULL, napi_default, NULL },
         { "renderToMeta", NULL, md4x_napi_to_meta, NULL, NULL, NULL, napi_default, NULL },
         { "renderToText", NULL, md4x_napi_to_text, NULL, NULL, NULL, napi_default, NULL },
+        { "renderToMarkdown", NULL, md4x_napi_to_markdown, NULL, NULL, NULL, napi_default, NULL },
         { "heal", NULL, md4x_napi_heal, NULL, NULL, NULL, napi_default, NULL },
     };
-    napi_define_properties(env, exports, 8, props);
+    napi_define_properties(env, exports, 9, props);
     return exports;
 }
 

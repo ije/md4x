@@ -138,6 +138,12 @@ export function renderToText(input, opts) {
   return render(exports, exports.md4x_to_text, input, flags);
 }
 
+export function renderToMarkdown(input, opts) {
+  const flags = opts?.heal ? HEAL_FLAG : 0;
+  const exports = _getExports();
+  return render(exports, exports.md4x_to_markdown, input, flags);
+}
+
 export function parseMeta(input, opts) {
   const meta = JSON.parse(renderToMeta(input, opts));
   if (!meta.title && meta.headings?.[0]) {

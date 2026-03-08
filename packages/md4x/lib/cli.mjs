@@ -6,6 +6,7 @@ import {
   renderToHtml,
   renderToAnsi,
   renderToText,
+  renderToMarkdown,
   parseAST,
   parseMeta,
   heal,
@@ -47,7 +48,7 @@ ${_g("Usage:")} ${_b("md4x")} ${_d("[OPTION]... [FILE]")}
 
 ${_g("General options:")}
   ${_c("-o")}, ${_c("--output")}=${_d("FILE")}     Output file ${_d("(default: stdout)")}
-  ${_c("-t")}, ${_c("--format")}=${_d("FORMAT")}   Output format: ${_c("html")}, ${_c("text")}, ${_c("ast")}, ${_c("ansi")}, ${_c("meta")}, ${_c("heal")} ${_d("(default: ansi for TTY, text otherwise)")}
+  ${_c("-t")}, ${_c("--format")}=${_d("FORMAT")}   Output format: ${_c("html")}, ${_c("text")}, ${_c("ast")}, ${_c("ansi")}, ${_c("meta")}, ${_c("markdown")}, ${_c("heal")} ${_d("(default: ansi for TTY, text otherwise)")}
       ${_c("--heal")}             Heal incomplete markdown before rendering
       ${_c("--show-urls")}         Show link URLs after link text ${_d("(ANSI only)")}
       ${_c("--show-frontmatter")}  Show frontmatter content ${_d("(ANSI only)")}
@@ -96,7 +97,15 @@ if (values.version) {
   process.exit(0);
 }
 
-const supportedFormats = ["html", "ast", "ansi", "text", "meta", "heal"];
+const supportedFormats = [
+  "html",
+  "ast",
+  "ansi",
+  "text",
+  "meta",
+  "markdown",
+  "heal",
+];
 const format = values.format;
 if (!supportedFormats.includes(format)) {
   process.stderr.write(`Unknown format: ${format}\n`);
@@ -183,6 +192,9 @@ switch (format) {
     break;
   case "meta":
     output = JSON.stringify(parseMeta(input, healOpt), null, 2);
+    break;
+  case "markdown":
+    output = renderToMarkdown(input, healOpt);
     break;
   case "heal":
     output = heal(input);

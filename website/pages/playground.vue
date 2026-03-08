@@ -7,6 +7,7 @@ import {
   parseAST,
   renderToAnsi,
   renderToText,
+  renderToMarkdown,
   parseMeta,
   type ComarkTree,
 } from "md4x/wasm";
@@ -51,6 +52,7 @@ const modeOptions = [
   { value: "ansi", label: "ANSI" },
   { value: "text", label: "Text" },
   { value: "meta", label: "Meta" },
+  { value: "markdown", label: "Markdown" },
   { value: "vue", label: "Vue" },
   { value: "react", label: "React" },
 ];
@@ -140,6 +142,13 @@ function render() {
     } else if (m === "text") {
       const text = renderToText(md, { heal });
       const escaped = text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+      outputHtml.value = `<pre>${escaped}</pre>`;
+    } else if (m === "markdown") {
+      const pm = renderToMarkdown(md, { heal });
+      const escaped = pm
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;");
@@ -413,7 +422,7 @@ onMounted(async () => {
         :class="[
           `mode-${mode}`,
           mode === 'html' && 'prose max-w-none p-5 px-6',
-          mode === 'text' &&
+          (mode === 'text' || mode === 'markdown') &&
             'whitespace-pre-wrap break-words p-5 px-6 font-mono text-[13.5px] leading-[1.65]',
         ]"
         v-html="outputHtml"

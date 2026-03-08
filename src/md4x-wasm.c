@@ -31,6 +31,7 @@
 #include "md4x-ansi.h"
 #include "md4x-meta.h"
 #include "md4x-text.h"
+#include "md4x-markdown.h"
 #include "md4x-heal.h"
 
 
@@ -185,6 +186,13 @@ int md4x_to_text(const char* input, unsigned input_size,
                  unsigned renderer_flags)
 {
     return render(md_text, input, input_size, renderer_flags);
+}
+
+__attribute__((export_name("md4x_to_markdown")))
+int md4x_to_markdown(const char* input, unsigned input_size,
+                     unsigned renderer_flags)
+{
+    return render(md_markdown, input, input_size, renderer_flags);
 }
 
 __attribute__((export_name("md4x_heal")))

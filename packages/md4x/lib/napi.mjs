@@ -89,6 +89,11 @@ export function renderToText(input, opts) {
   return getBinding().renderToText(str(input), flags);
 }
 
+export function renderToMarkdown(input, opts) {
+  const flags = opts?.heal ? HEAL_FLAG : 0;
+  return getBinding().renderToMarkdown(str(input), flags);
+}
+
 export function parseMeta(input, opts) {
   const meta = JSON.parse(renderToMeta(input, opts));
   if (!meta.title && meta.headings?.[0]) {

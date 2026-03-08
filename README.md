@@ -11,8 +11,8 @@ Fast and Small markdown parser and renderer based on [mity/md4c](https://github.
 
 - **Fast** — Written in C, **~6x** faster than markdown-it
 - **CLI** — Render local files, remote URLs, GitHub repos, npm packages
-- **Small** — **~90KB** gzip WASM binary works in Node.js and Browser
-- **Multi-format output** — HTML, JSON AST, ANSI terminal, plain text, metadata
+- **Small** — **~100KB** gzip WASM binary works in Node.js and Browser
+- **Multi-format output** — HTML, JSON AST, ANSI terminal, plain text, markdown, metadata
 - **Streaming heal** — Fix incomplete markdown from LLM output in real-time
 - **Full CommonMark** — Passes the CommonMark spec
 - **GitHub Flavored Markdown** — Tables, task lists, strikethrough, autolinks, alerts
@@ -36,6 +36,7 @@ npx md4x README.md -t html                  # HTML output
 npx md4x README.md -t text                  # Plain text output (strip markdown)
 npx md4x README.md -t ast                   # JSON AST output (comark)
 npx md4x README.md -t meta                  # Metadata JSON output
+npx md4x README.md -t markdown              # Clean markdown (strip MDC/frontmatter/HTML)
 npx md4x README.md -t heal                  # Heal incomplete markdown
 npx md4x README.md --heal                   # Heal before rendering (any format)
 npx md4x README.md --heal -t json           # Heal + JSON AST output
@@ -71,6 +72,7 @@ import {
   parseAST,
   renderToAnsi,
   renderToText,
+  renderToMarkdown,
   renderToMeta,
   parseMeta,
   heal,
@@ -83,6 +85,7 @@ const json = renderToAST("# Hello, **world**!"); // raw JSON string
 const ast = parseAST("# Hello, **world**!"); // parsed ComarkTree object
 const ansi = renderToAnsi("# Hello, **world**!");
 const text = renderToText("# Hello, **world**!"); // plain text (stripped)
+const md = renderToMarkdown("# Hello, **world**!"); // clean standard markdown
 const metaJson = renderToMeta("# Hello, **world**!"); // raw JSON string
 const meta = parseMeta("# Hello, **world**!"); // parsed meta
 
@@ -326,6 +329,17 @@ Strips markdown formatting and produces plain text:
 #include "md4x-text.h"
 
 md_text(input, input_size, output, stdout, MD_DIALECT_GITHUB, 0);
+```
+
+#### Markdown Renderer
+
+Converts extended markdown (MDC/Comark) to clean, standard markdown. Strips frontmatter, HTML comments, raw HTML, and inline attributes. Converts block/inline components to HTML tags, wiki links to regular links.
+
+```c
+#include "md4x.h"
+#include "md4x-markdown.h"
+
+md_markdown(input, input_size, output, stdout, MD_DIALECT_ALL, 0);
 ```
 
 #### Meta Renderer
